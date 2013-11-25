@@ -1,0 +1,6 @@
+scripts/*.sh
+.DS_Store
+traning_list_08132013.xlsx
+readme*
+results/
+data/
