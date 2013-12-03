@@ -34,7 +34,10 @@ class MascotHitsCSVParser
 				next
 			end
 			if in_protein_hits_table == true
-				if (hit.pep_var_mod.eql?('Acetyl (K)') || hit.pep_var_mod.eql?('Acetyl (K); Oxidation (M)') || hit.pep_var_mod.eql?('Acetyl (K); 2 Oxidation (M)')) && (hit.pep_expect < @cutoff)
+				# for the first elute samples, find only the 42K modifications
+				# if (hit.pep_var_mod.eql?('Acetyl (K)') || hit.pep_var_mod.eql?('Acetyl (K); Oxidation (M)') || hit.pep_var_mod.eql?('Acetyl (K); 2 Oxidation (M)')) && (hit.pep_expect < @cutoff)
+				# for the second elute samples, find all Acetyl modifications
+				if (hit.pep_var_mod.include? "Acetyl") && (hit.pep_expect < @cutoff)
 					if !@pep_index.has_key?(hit.pep_seq)
 						@pep_index[hit.pep_seq] = []
 					end
@@ -71,6 +74,48 @@ class MascotHitsCSVParser
 			end
 		end
 		return highest_scored_hit
+	end
+
+	def has_both_modifications(peptide)
+		hits = protein_hits(peptide)
+		mods = []
+		# split the mods for the hits that have multiple modifications
+		hits.each do |hit|
+			if hit.pep_var_mod.include? ";"
+				mods = hit.pep_var_mod.split('; ')
+			else
+				mods << hit.pep_var_mod
+			end
+		end
+		mods.flatten!
+
+		mods.each do |mod|
+			# erase all oxidation modifications
+			if mod.include?("Oxidation")
+				mods.delete(mod)
+				next
+			end
+			# erase all numbers before Acetyl
+			mod =~ /\d*(Acetyl*.+\s\(\w\))/
+			puts mod
+			if !mod.nil?
+				mod.replace $1
+			end
+		end
+		puts "MODS PER PEP: " + mods.join(' | ')
+		# # for mod Y:
+		# if mods.include?("Acetyl (Y)") && mods.include?("Acetyl:2H(3) (Y)")
+		
+		# for mod T:
+		if mods.include?("Acetyl (T)") && mods.include?("Acetyl:2H(3) (T)")
+
+		# # for mod S:
+		# if mods.include?("Acetyl (S)") && mods.include?("Acetyl:2H(3) (S)")
+			puts "TRUE"
+			return true
+		else
+			return false
+		end
 	end
 
 	def each()

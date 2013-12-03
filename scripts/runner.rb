@@ -1,6 +1,8 @@
 # USAGE: ruby runner.rb ../data/mascot_searches/F001808_with_pipes.csv ../data/dats/F001808.dat ../data/unique_list_for_dimitra_07232013.csv 100.0 ../results/F001808_transitions.csv
 # ruby runner.rb ../data/mascot_searches/F001809_with_pipes.csv ../data/dats/F001809.dat ../data/unique_list_for_dimitra_07232013.csv 100.0 ../results/F001809_transitions.csv
 
+# NOTE: I have changed the modification filter in the mascot_hits_csv_parser and doesn't pick the 45K acetylation (3H (K)).
+
 require 'rubygems'
 require 'fastercsv'
 require 'pep'

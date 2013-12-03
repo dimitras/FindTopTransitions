@@ -1,6 +1,9 @@
+# NOTE: check pepindex first!
 # USAGE: ruby find_42_aspirin_peaks.rb ../data/42-45_aspirin/F003886_with_pipes.csv ../data/42-45_aspirin/F003886.dat ../data/42-45_aspirin/lysine_acetylation_list_11142013_F003886.csv 100.0 ../results/F003886_transitions.csv
 
-# ruby find_42_aspirin_peaks.rb ../data/42-45_aspirin/F003887_with_pipes.csv ../data/42-45_aspirin/F003887.dat ../data/42-45_aspirin/lysine_acetylation_list_11142013_F003887.csv 100.0 ../results/F003887_transitions.csv
+# A sample (first elute samples) under both aspirin +42da and +45da.
+# Pick only the only 42 acetylated (acetyl(K) not acetyl 3H(K)).
+# For each peptide keep the one with highest score.
 
 require 'rubygems'
 require 'fastercsv'
@@ -30,7 +33,7 @@ FasterCSV.open(outfile,'w') do |csv|
 	csvp = MascotHitsCSVParser.open(csvfile, cutoff)
 	csvp.each_peptide do |peptide|
 		if common_peptides.has_key?(peptide)
-			if petide.eq?('ICLDLQAPLYKK')
+			if peptide.eq?('ICLDLQAPLYKK')
 				highest_scored_hit = csvp.highest_scored_hit_for_pep(peptide)
 				puts highest_scored_hit.pep_var_mod
 				peptide = highest_scored_hit.pep_seq
